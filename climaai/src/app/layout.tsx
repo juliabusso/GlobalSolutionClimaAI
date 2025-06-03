@@ -1,23 +1,18 @@
-import React from "react";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import "./components/globals.css";
+import './globals.css';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 export const metadata = {
-  title: "ClimaAI",
-  description: "Simulador de risco pessoal em desastres naturais",
+  title: 'ClimaAI',
+  description: 'Simulador de risco climático personalizado',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt">
-      <body className="flex flex-col min-h-screen bg-white text-gray-800">
+    <html lang="pt-BR">
+      <body>
         <Header />
-        <main className="flex-grow px-4 sm:px-8 md:px-16 py-8">{children}</main>
+        {children}
         <Footer />
       </body>
     </html>
