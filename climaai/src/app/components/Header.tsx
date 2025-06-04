@@ -6,7 +6,7 @@ import Link from 'next/link';
 export default function Header() {
   const menuItems = [
     { label: "Simulação", href: "/simulacao" },
-    { label: "Formulário", href: "/formulário" },
+    { label: "Desastres", href: "/desastre" },
     { label: "Home", href: "/" },
     { label: "Metereologia", href: "/metereologia" },
     { label: "Membros", href: "/membros" }
