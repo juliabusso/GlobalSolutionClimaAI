@@ -20,7 +20,7 @@ const membros = [
     github: "https://github.com/juliabusso",
     linkedin: "https://www.linkedin.com/in/juliadbusso/",
   },
-  // Adicione mais membros aqui
+  
 ];
 
 export default function MembrosPage() {
