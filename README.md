@@ -1,8 +1,12 @@
-# Sprint - 4 - FrontEnd
+# Global Solution - ClimaAI
 
 ## Visão Geral
 
-Nos Trilhos é um aplicativo desenvolvido para aprimorar a experiência dos passageiros do metrô CCR. O aplicativo aborda problemas como a introdução de um bilhete único digital, acompanhamento de atrasos nos trens e gerenciamento de fluxo de passageiros, oferecendo sugestões de melhores rotas e criando um canal de comunicação eficiente.
+Cada dia mais, os problemas ambientais afetam diretamente o nosso dia a dia. Enchentes, deslizamentos e outros desastres naturais atingem pessoas em diferentes partes de um país tão grande quanto o Brasil. Por isso, é fundamental que todos estejam preparados.
+Mais do que o básico, queremos que este projeto ajude as pessoas a se prepararem de verdade, dando a elas a chance de saber o que pode acontecer ainda naquele dia — mesmo que seja apenas algumas horas antes. Isso pode significar salvar vidas.
+O projeto tem como objetivo dar conhecimento para as pessoas preverem possíveis desastres com base nos sinais e nas condições meteorológicas do local onde a pessoa está. A ideia é simples, mas poderosa: dar às pessoas o direito de “ver o futuro”.
+Poder analisar, receber instruções detalhadas, o que precisa, como agir, o nosso objetivo sempre será preservar a vida. 
+
 
 ## Tecnologias Utilizadas
 - Next.js
@@ -57,14 +61,9 @@ Felipe Anselmo Soares Costa - Rm560661 - 1TDSPB
 
 
 ## Descrição do Problema 
-Fluxo Elevado de Passageiros: O número de passageiros excede a capacidade ideal, resultando em superlotação. 
-Avisos e Alertas Inadequados: Falta de comunicação eficaz sobre linhas e falhas técnicas, gerando confusão e insatisfação entre os usuários. 
-Pagamento Lento: Processos de pagamento demorados causam congestionamento nas áreas de embarque, impactando a eficiência do serviço. 
+O Brasil enfrenta diversos desastres naturais, como enchentes e deslizamentos, que afetam milhares de pessoas todos os anos. A ocupação irregular e as mudanças climáticas aumentam esses riscos. Prevenir é essencial: com informação é possível salvar vidas. O projeto visa usar geolocalização e dados meteorológicos para prever perigos e orientar a população. Mais do que reagir, queremos ajudar as pessoas a se prepararem antes que a tragédia aconteça.
 
-##Free Flow: Facilitação do Transporte Público
-Sabemos que pegar metrô e trem não é nada fácil, especialmente em horário de pico. Por isso, decidimos adotar a ideia de Free Flow, com o intuito de ajudar os passageiros de diversas maneiras.
-
-##Links de acesso
+## Links de acesso
 
 [Github. Esse acesso](https://github.com/juliabusso/GlobalSolutionClimaAI)
 

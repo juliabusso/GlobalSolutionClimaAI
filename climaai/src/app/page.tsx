@@ -70,7 +70,7 @@ export default function Home() {
               Use agora mesmo nosso simulador e dê o primeiro passo para proteger sua vida e a da sua família.
             </p>
           </div>
-          <Link href="/formulario" className="mt-6">
+          <Link href="/simulacao" className="mt-6">
             <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-semibold rounded-md transition">
               Começar Avaliação
             </button>
