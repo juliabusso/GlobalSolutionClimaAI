@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Cadastro() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2A597D] to-[#6BA6BA] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#bddff9] to-[#6BA6BA] p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <h2 className="text-3xl font-bold text-[#2A597D] mb-6 text-center">Crie sua conta</h2>
 

@@ -9,10 +9,10 @@ const membros = [
     linkedin: "https://linkedin.com/in/joaosilva",
   },
   {
-    nome: "Maria Oliveira",
-    imagem: "/img/membros/maria.jpg",
-    github: "https://github.com/mariaoliveira",
-    linkedin: "https://linkedin.com/in/mariaoliveira",
+    nome: "Felipe Anselmo Soares Costa - RM 560661",
+    imagem: "/img/felipe.jpeg",
+    github: "https://github.com/Felipeanselmosc",
+    linkedin: "https://www.linkedin.com/in/felipe-anselmo-97137431a/",
   },
   {
     nome: "Julia Damasceno Busso - RM 560293",
