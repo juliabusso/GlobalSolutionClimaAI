@@ -4,21 +4,36 @@ import { useState } from 'react';
 
 export default function SimuladorRisco() {
   const [respostas, setRespostas] = useState({
+    cidade: '',
+    estado: '',
     pertoRio: '',
     alagamentos: '',
     encosta: '',
     rachaduras: '',
     drenagem: '',
+    moraEmEncosta: '',
+    ruaAlaga: '',
+    tipoConstrucao: '',
+    numeroPessoas: '',
   });
+
   const [risco, setRisco] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setRespostas({ ...respostas, [e.target.name]: e.target.value });
   };
 
   const calcularRisco = () => {
-    const valores = Object.values(respostas);
-    const respostasSim = valores.filter((v) => v === 'sim').length;
+    const criteriosRisco = [
+      respostas.pertoRio,
+      respostas.alagamentos,
+      respostas.encosta,
+      respostas.rachaduras,
+      respostas.drenagem,
+      respostas.moraEmEncosta,
+      respostas.ruaAlaga,
+    ];
+    const respostasSim = criteriosRisco.filter((v) => v === 'sim').length;
 
     if (respostasSim >= 3) setRisco('⚠️ Sua casa está em ÁREA DE RISCO.');
     else if (respostasSim === 2) setRisco('⚠️ Há sinais de alerta, fique atento.');
@@ -41,40 +56,51 @@ export default function SimuladorRisco() {
         }}
         className="space-y-4"
       >
-        <Pergunta
-          label="Sua casa está perto de um rio ou córrego?"
-          name="pertoRio"
-          value={respostas.pertoRio}
-          onChange={handleChange}
-        />
+        <Pergunta label="Cidade" name="cidade" value={respostas.cidade} onChange={handleChange} tipo="text" />
+        <Pergunta label="Estado" name="estado" value={respostas.estado} onChange={handleChange} tipo="text" />
 
-        <Pergunta
-          label="Já houve alagamentos na sua região?"
-          name="alagamentos"
-          value={respostas.alagamentos}
-          onChange={handleChange}
-        />
+        <Pergunta label="Sua casa está perto de um rio ou córrego?" name="pertoRio" value={respostas.pertoRio} onChange={handleChange} />
+        <Pergunta label="Já houve alagamentos na sua região?" name="alagamentos" value={respostas.alagamentos} onChange={handleChange} />
+        <Pergunta label="Sua casa está em área de encosta ou morro?" name="encosta" value={respostas.encosta} onChange={handleChange} />
+        <Pergunta label="Existem rachaduras nas paredes ou no chão da casa?" name="rachaduras" value={respostas.rachaduras} onChange={handleChange} />
+        <Pergunta label="Há problemas de drenagem de água (escoamento)?" name="drenagem" value={respostas.drenagem} onChange={handleChange} />
 
-        <Pergunta
-          label="Sua casa está em área de encosta ou morro?"
-          name="encosta"
-          value={respostas.encosta}
-          onChange={handleChange}
-        />
+        <Pergunta label="Você mora em encosta?" name="moraEmEncosta" value={respostas.moraEmEncosta} onChange={handleChange} />
+        <Pergunta label="Sua rua costuma alagar?" name="ruaAlaga" value={respostas.ruaAlaga} onChange={handleChange} />
 
-        <Pergunta
-          label="Existem rachaduras nas paredes ou no chão da casa?"
-          name="rachaduras"
-          value={respostas.rachaduras}
-          onChange={handleChange}
-        />
+        <div className="text-left">
+          <label className="block mb-1 text-black dark:text-white">Tipo da construção</label>
+          <select
+            name="tipoConstrucao"
+            value={respostas.tipoConstrucao}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            required
+          >
+            <option value="">Selecione</option>
+            <option value="ALVENARIA">Alvenaria</option>
+            <option value="MADEIRA">Madeira</option>
+            <option value="IMPROVISADA">Improvisada</option>
+          </select>
+        </div>
 
-        <Pergunta
-          label="Há problemas de drenagem de água (escoamento)?"
-          name="drenagem"
-          value={respostas.drenagem}
-          onChange={handleChange}
-        />
+        <div className="text-left">
+          <label className="block mb-1 text-black dark:text-white">Número de pessoas na residência</label>
+          <select
+            name="numeroPessoas"
+            value={respostas.numeroPessoas}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            required
+          >
+            <option value="">Selecione</option>
+            {[...Array(10)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <button
           type="submit"
@@ -94,26 +120,44 @@ export default function SimuladorRisco() {
   );
 }
 
-function Pergunta({ label, name, value, onChange }: {
+function Pergunta({
+  label,
+  name,
+  value,
+  onChange,
+  tipo = 'select',
+}: {
   label: string;
   name: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
+  tipo?: 'select' | 'text';
 }) {
   return (
     <div className="text-left">
       <label className="block mb-1 text-black dark:text-white">{label}</label>
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full border border-gray-300 rounded px-3 py-2"
-        required
-      >
-        <option value="">Selecione</option>
-        <option value="sim">Sim</option>
-        <option value="nao">Não</option>
-      </select>
+      {tipo === 'text' ? (
+        <input
+          type="text"
+          name={name}
+          value={value}
+          onChange={onChange}
+          className="w-full border border-gray-300 rounded px-3 py-2"
+          required
+        />
+      ) : (
+        <select
+          name={name}
+          value={value}
+          onChange={onChange}
+          className="w-full border border-gray-300 rounded px-3 py-2"
+          required
+        >
+          <option value="">Selecione</option>
+          <option value="sim">Sim</option>
+          <option value="nao">Não</option>
+        </select>
+      )}
     </div>
   );
 }
