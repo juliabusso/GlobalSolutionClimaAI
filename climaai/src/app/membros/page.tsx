@@ -3,10 +3,10 @@ import Link from "next/link";
 
 const membros = [
   {
-    nome: "João Silva",
-    imagem: "/img/membros/joao.jpg",
-    github: "https://github.com/joaosilva",
-    linkedin: "https://linkedin.com/in/joaosilva",
+    nome: "João Gabriel Fuchs Grecco",
+    imagem: "/img/gabriel.jpeg",
+    github: "https://github.com/joaoGFG",
+    linkedin: "https://www.linkedin.com/in/jo%C3%A3o-gabriel-fuchs-grecco-604ba4326/",
   },
   {
     nome: "Felipe Anselmo Soares Costa - RM 560661",
