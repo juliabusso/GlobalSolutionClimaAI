@@ -1,19 +1,20 @@
 "use client";
-
+ 
 import { useEffect, useState } from "react";
 import FormLogin from "../FormLogin/FormLogin";
 import FormSimulacao from "./FormSimulacao";
-
+ 
+ 
 export default function SimulacaoAutenticada() {
     const [usuarioLogado, setUsuarioLogado] = useState(false);
-
+ 
     useEffect(() => {
         const usuarioId = localStorage.getItem("usuarioId");
         if (usuarioId) {
             setUsuarioLogado(true);
         }
     }, []);
-
+ 
     return (
         <div className="max-w-xl mx-auto mt-10 px-4">
             {usuarioLogado ? (
