@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ interface Usuario {
   nome: string;
   email: string;
   senha?: string;
+  dataCriacao?: string; // <-- novo campo
 }
 
 export default function ProfilePage() {
@@ -57,6 +58,20 @@ export default function ProfilePage() {
     router.push("/atualizar");
   };
 
+  const logout = () => {
+    localStorage.clear();
+    router.push("/login");
+  };
+
+  function formatarData(data: string) {
+    const dateObj = new Date(data);
+    return dateObj.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+  }
+
   if (carregando) {
     return <div className="text-center py-20">Carregando perfil...</div>;
   }
@@ -88,14 +103,30 @@ export default function ProfilePage() {
               <label className="text-sm font-bold text-[#2A597D]">Senha</label>
               <div className="p-2 border rounded-lg bg-gray-100">********</div>
             </div>
+            {usuario.dataCriacao && (
+              <div>
+                <label className="text-sm font-bold text-[#2A597D]">Criado em</label>
+                <div className="p-2 border rounded-lg bg-gray-100">
+                  {formatarData(usuario.dataCriacao)}
+                </div>
+              </div>
+            )}
           </div>
 
-          <Button
-            onClick={irParaAtualizar}
-            className="mt-4 w-full bg-[#F28C6A] text-white font-bold hover:bg-[#e57856]"
-          >
-            Editar Perfil
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full mt-4">
+            <Button
+              onClick={irParaAtualizar}
+              className="w-full bg-[#F28C6A] text-white font-bold hover:bg-[#e57856]"
+            >
+              Editar Perfil
+            </Button>
+            <Button
+              onClick={logout}
+              className="w-full bg-gray-300 text-black font-bold hover:bg-gray-400"
+            >
+              Sair
+            </Button>
+          </div>
         </div>
       </div>
     </div>
