@@ -22,23 +22,19 @@ export default function FormLogin() {
       const data = await response.json();
 
       if (response.ok) {
-        setMensagem("Login bem-sucedido!");
-
+        // Armazena os dados no localStorage
+        localStorage.setItem("token", data.token);
         localStorage.setItem("usuarioId", data.id);
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-        }
+        localStorage.setItem("nome", data.nome);
+        localStorage.setItem("email", data.email);
 
-        router.push("/simulacao");
+        setMensagem("Login bem-sucedido!");
+        router.push("/simulacao"); // Redireciona
       } else {
-        setMensagem(`Erro: ${data.mensagem || "Email ou senha inválidos."}`);
+        setMensagem(`Erro: ${data.message || "Email ou senha inválidos."}`);
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Erro durante o login:", error.message);
-      } else {
-        console.error("Erro desconhecido durante o login.");
-      }
+      console.error("Erro durante o login:", error);
       setMensagem("Erro ao conectar com o servidor.");
     }
   };

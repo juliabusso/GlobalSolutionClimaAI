@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function FormCadastro() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
+  const router = useRouter();
 
   const handleCadastro = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,17 +21,21 @@ export default function FormCadastro() {
       });
 
       const data = await response.json();
+
       if (response.ok) {
-        setMensagem('Usuário cadastrado com sucesso!');
+        // Salva os dados no localStorage se a API retornar
+        if (data.token) localStorage.setItem("token", data.token);
+        if (data.id) localStorage.setItem("usuarioId", data.id);
+        localStorage.setItem("nome", data.nome);
+        localStorage.setItem("email", data.email);
+
+        setMensagem('Cadastro realizado com sucesso!');
+        router.push("/simulacao"); // Redireciona após cadastro
       } else {
-        setMensagem(`Erro: ${data.mensagem || 'Falha ao cadastrar.'}`);
+        setMensagem(`Erro: ${data.message || "Não foi possível cadastrar."}`);
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Erro durante o cadastro:", error.message);
-      } else {
-        console.error("Erro desconhecido durante o cadastro.");
-      }
+      console.error("Erro no cadastro:", error);
       setMensagem("Erro ao conectar com o servidor.");
     }
   };
@@ -79,7 +85,7 @@ export default function FormCadastro() {
         Cadastrar
       </button>
 
-      {mensagem && <p className="text-center text-sm mt-2">{mensagem}</p>}
+      {mensagem && <p className="text-center text-sm mt-2 text-red-600">{mensagem}</p>}
     </form>
   );
 }
