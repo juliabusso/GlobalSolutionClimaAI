@@ -115,6 +115,12 @@ export default function Header() {
               >
                 Crie sua conta
               </Link>
+              <Link
+                href="/perfil"
+                className="bg-white text-black rounded full px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
+              >
+                Perfil
+              </Link>
             </>
           )}
         </div>

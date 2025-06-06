@@ -29,7 +29,7 @@ export default function FormLogin() {
         localStorage.setItem("email", data.email);
 
         setMensagem("Login bem-sucedido!");
-        router.push("/simulacao"); // Redireciona
+        router.push("/perfil"); // Redireciona
       } else {
         setMensagem(`Erro: ${data.message || "Email ou senha inválidos."}`);
       }
