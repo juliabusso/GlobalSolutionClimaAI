@@ -1,10 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-import { Input } from '@/components/Input'
 import { Button } from '@/components/Button'
 import { Card, CardContent } from '@/components/Card'
-import { CloudSun, CloudRain, Sun, Snowflake, Wind } from 'lucide-react'
+import { Input } from '@/components/Input'
+import { CloudRain, CloudSun, Snowflake, Sun, Wind } from 'lucide-react'
+import { useState } from 'react'
+
+// Tipagem dos dados da previsão do tempo
+type ForecastData = {
+  daily: {
+    time: string[]
+    weathercode: number[]
+    temperature_2m_max: number[]
+    temperature_2m_min: number[]
+    windspeed_10m_max: number[]
+  }
+}
 
 const getWeatherIcon = (code: number) => {
   if ([0, 1].includes(code)) return <Sun className="text-yellow-500 w-8 h-8" />
@@ -17,7 +28,7 @@ const getWeatherIcon = (code: number) => {
 
 export default function WeatherPage() {
   const [city, setCity] = useState('')
-  const [forecast, setForecast] = useState<any>(null)
+  const [forecast, setForecast] = useState<ForecastData | null>(null)
   const [loading, setLoading] = useState(false)
 
   const getForecast = async () => {
@@ -42,6 +53,7 @@ export default function WeatherPage() {
       setForecast(weatherData)
     } catch (err) {
       console.error(err)
+      setForecast(null)
     }
     setLoading(false)
   }
@@ -64,10 +76,12 @@ export default function WeatherPage() {
 
       {forecast && (
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {forecast.daily.time.map((date: string, index: number) => (
+          {forecast.daily.time.map((date, index) => (
             <Card key={date} className="bg-blue-50">
               <CardContent className="p-4 text-center">
-                <p className="font-semibold text-blue-700">{new Date(date).toLocaleDateString()}</p>
+                <p className="font-semibold text-blue-700">
+                  {new Date(date).toLocaleDateString()}
+                </p>
                 <div className="flex justify-center my-2">
                   {getWeatherIcon(forecast.daily.weathercode[index])}
                 </div>
@@ -88,3 +102,4 @@ export default function WeatherPage() {
     </div>
   )
 }
+ 
