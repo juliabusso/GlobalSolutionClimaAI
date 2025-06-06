@@ -2,8 +2,29 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
+  const [usuario, setUsuario] = useState<{ nome: string } | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Recupera dados do usuário do localStorage
+    const nome = localStorage.getItem("nome");
+    const token = localStorage.getItem("token");
+
+    if (token && nome) {
+      setUsuario({ nome });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setUsuario(null);
+    router.push("/login");
+  };
+
   const menuItems = [
     { label: "Simulação", href: "/simulacao" },
     { label: "Desastres", href: "/desastres" },
@@ -14,9 +35,8 @@ export default function Header() {
 
   return (
     <header className="w-full">
-      {/* Barra azul com logo, navegação e acesso */}
+      {/* Barra azul com logo e navegação */}
       <div className="bg-[#3366cc] flex flex-wrap items-center justify-between px-4 py-2">
-        {/* Logo */}
         <div className="flex items-center gap-4">
           <Image
             src="/img/logo.png"
@@ -27,7 +47,6 @@ export default function Header() {
           />
         </div>
 
-        {/* Navegação central */}
         <nav className="flex flex-wrap gap-3">
           {menuItems.map((item, i) => (
             <Link
@@ -40,35 +59,39 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Acesso/Login */}
-        <div className="flex gap-2 mt-3 md:mt-0">
-          <Link
-            href="/login"
-            className="bg-white text-black rounded-l-full px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
-          >
-            Login
-          </Link>
-          <Link
-            href="/cadastro"
-            className="bg-white text-black rounded-r-full px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
-          >
-            Crie sua conta
-          </Link>
-
-          {/* Acesso/Login */}
-        <div className="flex gap-2 mt-3 md:mt-0">
-          <Link
-            href="/perfil"
-            className="bg-white text-black rounded px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
-          >
-            Perfil
-          </Link>
-
-        </div>
+        <div className="flex items-center gap-2 mt-3 md:mt-0">
+          {usuario ? (
+            <>
+              <span className="text-white font-medium">
+                Olá, {usuario.nome}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white rounded-full px-4 py-1 text-sm font-medium hover:bg-red-600 transition"
+              >
+                Sair
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="bg-white text-black rounded-l-full px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
+              >
+                Login
+              </Link>
+              <Link
+                href="/cadastro"
+                className="bg-white text-black rounded-r-full px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
+              >
+                Crie sua conta
+              </Link>
+            </>
+          )}
         </div>
       </div>
-      
-      {/* Imagem de fundo com nuvens */}
+
+      {/* Banner com imagem */}
       <div className="w-full">
         <Image
           src="/img/banner.jpg"
