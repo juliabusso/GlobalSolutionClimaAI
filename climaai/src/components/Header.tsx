@@ -5,18 +5,56 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface Usuario {
+  nome: string;
+  email: string;
+  foto?: string;
+}
+
 export default function Header() {
-  const [usuario, setUsuario] = useState<{ nome: string } | null>(null);
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Recupera dados do usuário do localStorage
-    const nome = localStorage.getItem("nome");
     const token = localStorage.getItem("token");
+    const id = localStorage.getItem("usuarioId");
 
-    if (token && nome) {
-      setUsuario({ nome });
+    if (!token || !id) {
+      setUsuario(null);
+      return;
     }
+
+    async function fetchUser() {
+      try {
+        const res = await fetch(`https://gs-java-k07h.onrender.com/usuarios/${id}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setUsuario({
+            nome: data.nome,
+            email: data.email,
+            foto: data.foto
+          });
+          // opcional: atualizar localStorage caso nome/email sejam atualizados
+          localStorage.setItem("nome", data.nome);
+          localStorage.setItem("email", data.email);
+        } else {
+          localStorage.clear();
+          setUsuario(null);
+        }
+      } catch (e) {
+        console.error("Erro ao buscar usuário:", e);
+        localStorage.clear();
+        setUsuario(null);
+      }
+    }
+
+    fetchUser();
   }, []);
 
   const handleLogout = () => {
@@ -35,16 +73,9 @@ export default function Header() {
 
   return (
     <header className="w-full">
-      {/* Barra azul com logo e navegação */}
       <div className="bg-[#3366cc] flex flex-wrap items-center justify-between px-4 py-2">
         <div className="flex items-center gap-4">
-          <Image
-            src="/img/logo.png"
-            alt="Logo"
-            width={50}
-            height={50}
-            className="rounded-full"
-          />
+          <Image src="/img/logo.png" alt="Logo" width={50} height={50} className="rounded-full" />
         </div>
 
         <nav className="flex flex-wrap gap-3">
@@ -62,9 +93,22 @@ export default function Header() {
         <div className="flex items-center gap-2 mt-3 md:mt-0">
           {usuario ? (
             <>
-              <span className="text-white font-medium">
-                Olá, {usuario.nome}
-              </span>
+              {usuario.foto && (
+                <Image
+                  src={usuario.foto}
+                  alt="Avatar"
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover"
+                />
+              )}
+              <span className="text-white font-medium text-sm">Olá, {usuario.nome}</span>
+              <Link
+                href="/perfil"
+                className="bg-white text-black rounded-full px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
+              >
+                Perfil
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-red-500 text-white rounded-full px-4 py-1 text-sm font-medium hover:bg-red-600 transition"
@@ -84,14 +128,13 @@ export default function Header() {
                 href="/cadastro"
                 className="bg-white text-black rounded-r-full px-4 py-1 text-sm font-medium hover:bg-gray-100 transition"
               >
-                Crie sua conta
+                Cadastre-se
               </Link>
             </>
           )}
         </div>
       </div>
 
-      {/* Banner com imagem */}
       <div className="w-full">
         <Image
           src="/img/banner.jpg"

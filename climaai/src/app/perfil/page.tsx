@@ -22,7 +22,7 @@ export default function ProfilePage() {
     const id = localStorage.getItem("usuarioId");
 
     if (!token || !id) {
-      router.push("/login"); // redireciona se não estiver logado
+      router.push("/login");
       return;
     }
 
@@ -52,6 +52,10 @@ export default function ProfilePage() {
 
     buscarUsuario();
   }, [router]);
+
+  const irParaAtualizar = () => {
+    router.push("/atualizar");
+  };
 
   if (carregando) {
     return <div className="text-center py-20">Carregando perfil...</div>;
@@ -86,7 +90,10 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <Button className="mt-4 w-full bg-[#F28C6A] text-white font-bold hover:bg-[#e57856]">
+          <Button
+            onClick={irParaAtualizar}
+            className="mt-4 w-full bg-[#F28C6A] text-white font-bold hover:bg-[#e57856]"
+          >
             Editar Perfil
           </Button>
         </div>
