@@ -1,180 +1,240 @@
 'use client';
- 
+
 import { useEffect, useState } from 'react';
- 
+import SpinLoading from '../../components/SpinLoading/SpinLoading';
+import { Button } from '../../components/ui/Button';
+
 interface Respostas {
-    moraEmEncosta: string;
-    rachaduras: string;
-    ruaAlaga: string;
-    tipoConstrucao: string;
-    numeroPessoas: string;
-    pertoRio: string;
-    drenagem: string;
+  moraEmEncosta: string;
+  rachaduras: string;
+  ruaAlaga: string;
+  tipoConstrucao: string;
+  numeroPessoas: string;
+  pertoRio: string;
+  drenagem: string;
+  cidade: string;
+  estado: string;
 }
- 
+
 const FormSimulacao = () => {
-    const [respostas, setRespostas] = useState<Respostas>({
-        moraEmEncosta: '',
-        rachaduras: '',
-        ruaAlaga: '',
-        tipoConstrucao: '',
-        numeroPessoas: '',
-        pertoRio: '',
-        drenagem: '',
-    });
- 
-    const [usuarioId, setUsuarioId] = useState<number | null>(null);
- 
-    useEffect(() => {
-        const id = localStorage.getItem('usuarioId');
-        if (id) {
-            setUsuarioId(parseInt(id));
-        }
-    }, []);
- 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setRespostas(prev => ({ ...prev, [name]: value }));
+  const [respostas, setRespostas] = useState<Respostas>({
+    moraEmEncosta: '',
+    rachaduras: '',
+    ruaAlaga: '',
+    tipoConstrucao: '',
+    numeroPessoas: '',
+    pertoRio: '',
+    drenagem: '',
+    cidade: '',
+    estado: '',
+  });
+
+  const [usuarioId, setUsuarioId] = useState<number | null>(null);
+  const [carregando, setCarregando] = useState(false);
+  const [mensagemDeCarregamento, setMensagemDeCarregamento] = useState('');
+
+  useEffect(() => {
+    const id = localStorage.getItem('usuarioId');
+    if (id) {
+      setUsuarioId(parseInt(id));
+    }
+  }, []);
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setRespostas(prev => ({ ...prev, [name]: value }));
+  };
+
+  const simularRisco = async () => {
+    const payload = {
+      moraEmEncosta: respostas.moraEmEncosta === 'sim',
+      ruaAlaga: respostas.ruaAlaga === 'sim',
+      tipoConstrucao: respostas.tipoConstrucao.toUpperCase(),
+      numeroPessoas: parseInt(respostas.numeroPessoas || '0'),
+      cidade: respostas.cidade || 'Desconhecida',
+      estado: respostas.estado || 'Desconhecido',
     };
- 
-    const calcularRisco = () => {
-        let risco = 0;
- 
-        if (respostas.moraEmEncosta === 'sim') risco += 2;
-        if (respostas.rachaduras === 'sim') risco += 2;
-        if (respostas.ruaAlaga === 'sim') risco += 1;
-        if (respostas.tipoConstrucao === 'madeira') risco += 1;
-        if (respostas.pertoRio === 'sim') risco += 1;
-        if (respostas.drenagem === 'ruim') risco += 1;
-        if (parseInt(respostas.numeroPessoas) > 4) risco += 1;
- 
-        let classificacao = 'baixo';
-        if (risco >= 6) classificacao = 'alto';
-        else if (risco >= 3) classificacao = 'médio';
- 
-        alert(`O nível de risco é: ${classificacao.toUpperCase()}`);
+
+    try {
+      setCarregando(true);
+      setMensagemDeCarregamento('Simulando risco...');
+      const response = await fetch('https://gs-java-k07h.onrender.com/avaliacoes/simular', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Simulação de risco: ${data.nivelRisco}`);
+      } else {
+        const erro = await response.text();
+        alert('Erro ao simular risco: ' + erro);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao conectar com a API de simulação.');
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  const enviarAvaliacao = async () => {
+    if (!usuarioId) {
+      alert('Usuário não autenticado.');
+      return;
+    }
+
+    if (!respostas.tipoConstrucao) {
+      alert('Por favor, selecione o tipo de construção.');
+      return;
+    }
+
+    const payload = {
+      usuarioId,
+      moraEmEncosta: respostas.moraEmEncosta === 'sim',
+      ruaAlaga: respostas.ruaAlaga === 'sim',
+      tipoConstrucao: respostas.tipoConstrucao.toUpperCase(),
+      numeroPessoas: parseInt(respostas.numeroPessoas || '0'),
+      cidade: respostas.cidade || 'Desconhecida',
+      estado: respostas.estado || 'Desconhecido',
     };
- 
-    const enviarAvaliacao = async () => {
-        if (!usuarioId) {
-            alert('Usuário não autenticado.');
-            return;
-        }
- 
-        const payload = {
-            usuarioId,
-            moraEmEncosta: respostas.moraEmEncosta === 'sim',
-            ruaAlaga: respostas.ruaAlaga === 'sim',
-            tipoConstrucao: respostas.tipoConstrucao.toUpperCase(), // "ALVENARIA" ou "MADEIRA"
-            numeroPessoas: parseInt(respostas.numeroPessoas || '0'),
-        };
- 
-        try {
-            const response = await fetch('http://localhost:8080/api/avaliacoes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
- 
-            if (response.ok) {
-                const data = await response.json();
-                alert(`Avaliação salva com sucesso! Nível de risco: ${data.nivelRisco}`);
-            } else {
-                const erro = await response.text();
-                alert('Erro ao enviar avaliação: ' + erro);
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Erro ao conectar com a API.');
-        }
-    };
- 
-    return (
-        <form className="max-w-xl mx-auto space-y-4">
-            <div>
-                <label className="block text-sm font-medium">Você mora em encosta?</label>
-                <select name="moraEmEncosta" value={respostas.moraEmEncosta} onChange={handleChange} className="w-full p-2 border rounded">
-                    <option value="">Selecione</option>
-                    <option value="sim">Sim</option>
-                    <option value="nao">Não</option>
-                </select>
+
+    try {
+      setCarregando(true);
+      setMensagemDeCarregamento('Enviando avaliação...');
+      const response = await fetch('https://gs-java-k07h.onrender.com/avaliacoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        alert('Avaliação salva com sucesso!');
+      } else {
+        const erro = await response.text();
+        alert('Erro ao enviar avaliação: ' + erro);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao conectar com a API.');
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  if (carregando) {
+    return <SpinLoading mensagem={mensagemDeCarregamento} />;
+  }
+
+  return (
+    <div className="min-h-screen py-12">
+      <div className="max-w-2xl mx-auto bg-white p-8 shadow-md rounded-lg">
+        <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">
+          Formulário de Avaliação de Risco
+        </h2>
+        <form className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Cidade</label>
+            <input
+              type="text"
+              name="cidade"
+              value={respostas.cidade}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md"
+              placeholder="Digite sua cidade"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Estado</label>
+            <input
+              type="text"
+              name="estado"
+              value={respostas.estado}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md"
+              placeholder="Digite seu estado"
+            />
+          </div>
+
+          {[
+            { label: 'Você mora em encosta?', name: 'moraEmEncosta' },
+            { label: 'Sua casa apresenta rachaduras?', name: 'rachaduras' },
+            { label: 'A rua alaga quando chove?', name: 'ruaAlaga' },
+            { label: 'Sua casa fica perto de rio ou córrego?', name: 'pertoRio' },
+            { label: 'Como é a drenagem da sua rua?', name: 'drenagem', options: ['boa', 'ruim'] },
+          ].map(({ label, name, options }) => (
+            <div key={name}>
+              <label className="block text-sm font-medium text-gray-700">{label}</label>
+              <select
+                name={name}
+                value={respostas[name as keyof Respostas]}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">Selecione</option>
+                {(options || ['sim', 'nao']).map(opt => (
+                  <option key={opt} value={opt}>
+                    {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  </option>
+                ))}
+              </select>
             </div>
- 
-            <div>
-                <label className="block text-sm font-medium">Sua casa apresenta rachaduras?</label>
-                <select name="rachaduras" value={respostas.rachaduras} onChange={handleChange} className="w-full p-2 border rounded">
-                    <option value="">Selecione</option>
-                    <option value="sim">Sim</option>
-                    <option value="nao">Não</option>
-                </select>
-            </div>
- 
-            <div>
-                <label className="block text-sm font-medium">A rua alaga quando chove?</label>
-                <select name="ruaAlaga" value={respostas.ruaAlaga} onChange={handleChange} className="w-full p-2 border rounded">
-                    <option value="">Selecione</option>
-                    <option value="sim">Sim</option>
-                    <option value="nao">Não</option>
-                </select>
-            </div>
- 
-            <div>
-                <label className="block text-sm font-medium">Tipo de construção da sua casa:</label>
-                <select name="tipoConstrucao" value={respostas.tipoConstrucao} onChange={handleChange} className="w-full p-2 border rounded">
-                    <option value="">Selecione</option>
-                    <option value="alvenaria">Alvenaria</option>
-                    <option value="madeira">Madeira</option>
-                </select>
-            </div>
- 
-            <div>
-                <label className="block text-sm font-medium">Quantas pessoas moram na sua casa?</label>
-                <input
-                    type="number"
-                    name="numeroPessoas"
-                    value={respostas.numeroPessoas}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                />
-            </div>
- 
-            <div>
-                <label className="block text-sm font-medium">Sua casa fica perto de rio ou córrego?</label>
-                <select name="pertoRio" value={respostas.pertoRio} onChange={handleChange} className="w-full p-2 border rounded">
-                    <option value="">Selecione</option>
-                    <option value="sim">Sim</option>
-                    <option value="nao">Não</option>
-                </select>
-            </div>
- 
-            <div>
-                <label className="block text-sm font-medium">Como é a drenagem da sua rua?</label>
-                <select name="drenagem" value={respostas.drenagem} onChange={handleChange} className="w-full p-2 border rounded">
-                    <option value="">Selecione</option>
-                    <option value="boa">Boa</option>
-                    <option value="ruim">Ruim</option>
-                </select>
-            </div>
- 
-            <div className="flex flex-col gap-4 mt-6">
-                <button
-                    type="button"
-                    onClick={calcularRisco}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-                >
-                    Simular Risco
-                </button>
- 
-                <button
-                    type="button"
-                    onClick={enviarAvaliacao}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                >
-                    Enviar Avaliação para o Sistema
-                </button>
-            </div>
+          ))}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Tipo de construção da sua casa
+            </label>
+            <select
+              name="tipoConstrucao"
+              value={respostas.tipoConstrucao}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Selecione</option>
+              <option value="ALVENARIA">Alvenaria</option>
+              <option value="MADEIRA">Madeira</option>
+              <option value="IMPROVISADA">Improvisada</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Quantas pessoas moram na sua casa?
+            </label>
+            <input
+              type="number"
+              name="numeroPessoas"
+              value={respostas.numeroPessoas}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 mt-6">
+            <Button
+              type="button"
+              onClick={simularRisco}
+              isLoading={carregando}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Simular Risco
+            </Button>
+
+            <Button
+              type="button"
+              onClick={enviarAvaliacao}
+              isLoading={carregando}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Enviar Avaliação para o Sistema
+            </Button>
+          </div>
         </form>
-    );
+      </div>
+    </div>
+  );
 };
- 
+
 export default FormSimulacao;

@@ -1,8 +1,8 @@
 'use client'
 
-import { Button } from '@/components/Button'
-import { Card, CardContent } from '@/components/Card'
-import { Input } from '@/components/Input'
+import { Button } from '../../components/ui/Button'
+import { Card, CardContent } from '../../components/ui/Card'
+import { Input } from '@/components/Input/Input'
 import { CloudRain, CloudSun, Snowflake, Sun, Wind } from 'lucide-react'
 import { useState } from 'react'
 

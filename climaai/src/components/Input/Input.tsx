@@ -1,7 +1,7 @@
 'use client'
 
 import { InputHTMLAttributes } from 'react'
-import { cn } from './lib/util'
+import { cn } from '../../lib/util'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
