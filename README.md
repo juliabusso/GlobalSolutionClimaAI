@@ -69,5 +69,5 @@ O Brasil enfrenta diversos desastres naturais, como enchentes e deslizamentos, q
 
 [Acesso ao Site: Vercel](https://global-solution-clima-ai.vercel.app/)
 
-[Vídeo Youtube](https://youtu.be/ppPkpobGpvc)
+[Vídeo Youtube](https://youtu.be/jJy01XjhqZw)
 
